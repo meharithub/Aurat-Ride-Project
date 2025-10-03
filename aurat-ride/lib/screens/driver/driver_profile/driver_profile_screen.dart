@@ -1,4 +1,3 @@
-import 'package:aurat_ride/global_widgets/primary_back_button.dart';
 import 'package:aurat_ride/global_widgets/primary_button.dart';
 import 'package:aurat_ride/global_widgets/primary_heading.dart';
 import 'package:aurat_ride/global_widgets/primary_textfield.dart';
@@ -51,7 +50,10 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
           'Driver Profile',
           style: TextStyle(color: kPrimaryWhite),
         ),
-        leading: PrimaryBackButton(),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: kPrimaryWhite),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
           IconButton(
             icon: Icon(

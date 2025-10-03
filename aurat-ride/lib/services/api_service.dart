@@ -3,11 +3,12 @@ import 'package:http/http.dart' as http;
 
 class ApiService {
   // Base URLs
-  static const String baseUrlLocal = 'http://127.0.0.1:8000/api';
+  static const String baseUrlLocal = 'http://192.168.18.67:8000/api';
+  //static const String baseUrlLocalhost = 'http://localhost:8000/api';
   static const String baseUrlLive = 'https://riderbackend.vexronics.com/api';
   
-  // Use live URL by default, change to baseUrlLocal for local testing
-  static const String baseUrl = baseUrlLive;
+  // Use local URL for development, change to baseUrlLive for production
+  static const String baseUrl = baseUrlLocal;
   
   // Headers
   static Map<String, String> get defaultHeaders => {
@@ -840,5 +841,279 @@ class ApiService {
   static void switchToLive() {
     // This would require making baseUrl non-const
     // For now, manually change baseUrl constant above
+  }
+
+  // ==================== DRIVER METHODS ====================
+  
+  /// Set driver online/offline status
+  static Future<Map<String, dynamic>> setDriverOnline({
+    required String token,
+    required bool isOnline,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/driver/set-online'),
+      headers: getAuthHeaders(token),
+      body: jsonEncode({
+        'is_online': isOnline,
+      }),
+    );
+
+    return jsonDecode(response.body);
+  }
+
+  /// Accept a ride request
+  static Future<Map<String, dynamic>> acceptRide({
+    required String token,
+    required String rideId,
+  }) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/driver/accept-ride'),
+      headers: getAuthHeaders(token),
+      body: jsonEncode({
+        'ride_id': rideId,
+      }),
+    );
+
+    return jsonDecode(response.body);
+  }
+
+  // ==================== ADMIN API METHODS ====================
+
+  /// Get admin dashboard statistics
+  static Future<Map<String, dynamic>> getAdminDashboard(String token) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/admin/dashboard'),
+      headers: getAuthHeaders(token),
+    );
+    return jsonDecode(response.body);
+  }
+
+  /// Get all users with pagination and filters
+  static Future<Map<String, dynamic>> getAdminUsers({
+    required String token,
+    int page = 1,
+    int perPage = 15,
+    String? role,
+    String? search,
+    String? status,
+  }) async {
+    final queryParams = <String, String>{
+      'page': page.toString(),
+      'per_page': perPage.toString(),
+    };
+    
+    if (role != null) queryParams['role'] = role;
+    if (search != null) queryParams['search'] = search;
+    if (status != null) queryParams['status'] = status;
+
+    final uri = Uri.parse('$baseUrl/admin/users').replace(
+      queryParameters: queryParams,
+    );
+
+    final response = await http.get(uri, headers: getAuthHeaders(token));
+    return jsonDecode(response.body);
+  }
+
+  /// Get user details by ID
+  static Future<Map<String, dynamic>> getAdminUserDetails(String token, int userId) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/admin/users/$userId'),
+      headers: getAuthHeaders(token),
+    );
+    return jsonDecode(response.body);
+  }
+
+  /// Update user status
+  static Future<Map<String, dynamic>> updateUserStatus({
+    required String token,
+    required int userId,
+    bool? isProfileVerified,
+    bool? isOnline,
+    bool? isEmailVerified,
+    bool? isPhoneVerified,
+  }) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/admin/users/$userId/status'),
+      headers: getAuthHeaders(token),
+      body: jsonEncode({
+        if (isProfileVerified != null) 'is_profile_verified': isProfileVerified,
+        if (isOnline != null) 'is_online': isOnline,
+        if (isEmailVerified != null) 'is_email_verified': isEmailVerified,
+        if (isPhoneVerified != null) 'is_phone_verified': isPhoneVerified,
+      }),
+    );
+    return jsonDecode(response.body);
+  }
+
+  /// Delete user
+  static Future<Map<String, dynamic>> deleteUser(String token, int userId) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/admin/users/$userId'),
+      headers: getAuthHeaders(token),
+    );
+    return jsonDecode(response.body);
+  }
+
+  /// Get all rides with pagination and filters
+  static Future<Map<String, dynamic>> getAdminRides({
+    required String token,
+    int page = 1,
+    int perPage = 15,
+    String? status,
+    String? dateFrom,
+    String? dateTo,
+  }) async {
+    final queryParams = <String, String>{
+      'page': page.toString(),
+      'per_page': perPage.toString(),
+    };
+    
+    if (status != null) queryParams['status'] = status;
+    if (dateFrom != null) queryParams['date_from'] = dateFrom;
+    if (dateTo != null) queryParams['date_to'] = dateTo;
+
+    final uri = Uri.parse('$baseUrl/admin/rides').replace(
+      queryParameters: queryParams,
+    );
+
+    final response = await http.get(uri, headers: getAuthHeaders(token));
+    return jsonDecode(response.body);
+  }
+
+  /// Get ride details by ID
+  static Future<Map<String, dynamic>> getAdminRideDetails(String token, int rideId) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/admin/rides/$rideId'),
+      headers: getAuthHeaders(token),
+    );
+    return jsonDecode(response.body);
+  }
+
+  /// Update ride status
+  static Future<Map<String, dynamic>> updateRideStatus({
+    required String token,
+    required int rideId,
+    required String status,
+    String? canceledBy,
+  }) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/admin/rides/$rideId/status'),
+      headers: getAuthHeaders(token),
+      body: jsonEncode({
+        'status': status,
+        if (canceledBy != null) 'canceled_by': canceledBy,
+      }),
+    );
+    return jsonDecode(response.body);
+  }
+
+  /// Get analytics data
+  static Future<Map<String, dynamic>> getAdminAnalytics({
+    required String token,
+    int period = 30,
+  }) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/admin/analytics?period=$period'),
+      headers: getAuthHeaders(token),
+    );
+    return jsonDecode(response.body);
+  }
+
+  /// Get support messages
+  static Future<Map<String, dynamic>> getAdminSupportMessages({
+    required String token,
+    int page = 1,
+    int perPage = 15,
+    String? status,
+  }) async {
+    final queryParams = <String, String>{
+      'page': page.toString(),
+      'per_page': perPage.toString(),
+    };
+    
+    if (status != null) queryParams['status'] = status;
+
+    final uri = Uri.parse('$baseUrl/admin/support-messages').replace(
+      queryParameters: queryParams,
+    );
+
+    final response = await http.get(uri, headers: getAuthHeaders(token));
+    return jsonDecode(response.body);
+  }
+
+  /// Update support message
+  static Future<Map<String, dynamic>> updateSupportMessage({
+    required String token,
+    required int messageId,
+    required String status,
+    String? adminResponse,
+  }) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/admin/support-messages/$messageId'),
+      headers: getAuthHeaders(token),
+      body: jsonEncode({
+        'status': status,
+        if (adminResponse != null) 'admin_response': adminResponse,
+      }),
+    );
+    return jsonDecode(response.body);
+  }
+
+  /// Get app settings
+  static Future<Map<String, dynamic>> getAdminSettings(String token) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/admin/settings'),
+      headers: getAuthHeaders(token),
+    );
+    return jsonDecode(response.body);
+  }
+
+  /// Update app settings
+  static Future<Map<String, dynamic>> updateAdminSettings({
+    required String token,
+    required Map<String, dynamic> settings,
+  }) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/admin/settings'),
+      headers: getAuthHeaders(token),
+      body: jsonEncode(settings),
+    );
+    return jsonDecode(response.body);
+  }
+
+  /// Register a new driver by admin
+  static Future<Map<String, dynamic>> registerDriver({
+    required String token,
+    required String name,
+    required String email,
+    required String phone,
+    required String password,
+    required String gender,
+    required String cnic,
+    required String drivingLicense,
+    required String vehicleModel,
+    required String vehicleNumber,
+    int? vehicleYear,
+    String? vehicleColor,
+    // File uploads would be handled separately with multipart requests
+  }) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/admin/drivers/register'),
+      headers: getAuthHeaders(token),
+      body: jsonEncode({
+        'name': name,
+        'email': email,
+        'phone': phone,
+        'password': password,
+        'gender': gender,
+        'cnic': cnic,
+        'driving_license': drivingLicense,
+        'vehicle_model': vehicleModel,
+        'vehicle_number': vehicleNumber,
+        if (vehicleYear != null) 'vehicle_year': vehicleYear,
+        if (vehicleColor != null) 'vehicle_color': vehicleColor,
+      }),
+    );
+    return jsonDecode(response.body);
   }
 }

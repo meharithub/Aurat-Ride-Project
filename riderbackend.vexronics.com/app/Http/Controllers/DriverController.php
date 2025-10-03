@@ -11,18 +11,30 @@ class DriverController extends Controller
 {
     public function setOnline(Request $request)
     {
-        $user = $request->user();
-        if ($user->role !== 'driver') return response()->json(['message' => 'Forbidden'], 403);
-        $request->validate(['is_online' => 'required|boolean']);
-        $user->is_online = $request->boolean('is_online');
-        $user->save();
-        return response()->json(['status' => true, 'is_online' => $user->is_online]);
+        try {
+            $user = $request->user();
+            
+            if (!$user) {
+                return response()->json(['message' => 'User not found'], 404);
+            }
+            
+            if ($user->role !== 'Driver') {
+                return response()->json(['message' => 'Forbidden', 'user_role' => $user->role], 403);
+            }
+            
+            $request->validate(['is_online' => 'required|boolean']);
+            $user->is_online = $request->boolean('is_online');
+            $user->save();
+            return response()->json(['status' => true, 'is_online' => $user->is_online]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     public function updateLocation(Request $request)
     {
         $user = $request->user();
-        if ($user->role !== 'driver') return response()->json(['message' => 'Forbidden'], 403);
+        if ($user->role !== 'Driver') return response()->json(['message' => 'Forbidden'], 403);
         $v = Validator::make($request->all(), [
             'lat' => 'required|numeric',
             'lng' => 'required|numeric',

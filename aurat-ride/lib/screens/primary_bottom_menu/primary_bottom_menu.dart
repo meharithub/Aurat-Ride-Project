@@ -28,11 +28,10 @@ class _PrimaryBottomSheetState extends State<PrimaryBottomSheet> {
 
   // List of pages
   final List<Widget> _pages = [
-    RideBookingScreen(),
-    PaymentScreen(),
-    EnhancedNotificationsScreen(),
-    EmergencyScreen(),
-    SettingsScreen(),
+    RideBookingScreen(),           // Index 0 - Home
+    RideHistoryScreen(),           // Index 1 - Ride History
+    EnhancedNotificationsScreen(), // Index 2 - Notifications
+    SettingsScreen(),              // Index 3 - Profile/Settings
   ];
 
   // final List<int> _hideBottomNavOn = [7]; // Don't hide
@@ -73,52 +72,49 @@ class _PrimaryBottomSheetState extends State<PrimaryBottomSheet> {
   }
 
   Widget _buildBottomNav() {
-    return BottomAppBar(
-      shape: const CircularNotchedRectangle(),
-      notchMargin: 8,
-      child: SizedBox(
-        height: 60,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _navItem("$kLocalImageBaseUrl/home-icon.svg", "Home", 0),
-            // _navItem("$kLocalImageBaseUrl/favourite-icon.svg", "Favourites", 1),
-            // const SizedBox(width: 40), // space for FAB
-            _navItem("$kLocalImageBaseUrl/profile-icon.svg", "Contact Us", 1),
-            _navItem("$kLocalImageBaseUrl/profile-icon.svg", "Settings", 2),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _navItem(String icon, String label, int index) {
-    final isSelected = _selectedIndex == index;
-
-    return InkWell(
-      onTap: () {
+    return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      currentIndex: _selectedIndex,
+      onTap: (index) {
         setState(() {
           _selectedIndex = index;
         });
       },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          PrimaryLocalSvg(
-            svgPath: icon,
-            color: isSelected ? kPrimaryGreen : Colors.black,
+      selectedItemColor: kPrimaryGreen,
+      unselectedItemColor: Colors.grey,
+      backgroundColor: Colors.white,
+      elevation: 8,
+      items: [
+        BottomNavigationBarItem(
+          icon: PrimaryLocalSvg(
+            svgPath: "$kLocalImageBaseUrl/home-icon.svg",
+            color: _selectedIndex == 0 ? kPrimaryGreen : Colors.grey,
           ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: isSelected ? kPrimaryGreen : Colors.black,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-            ),
+          label: "Home",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(
+            Icons.history,
+            color: _selectedIndex == 1 ? kPrimaryGreen : Colors.grey,
           ),
-        ],
-      ),
+          label: "History",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(
+            Icons.notifications,
+            color: _selectedIndex == 2 ? kPrimaryGreen : Colors.grey,
+          ),
+          label: "Notifications",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(
+            Icons.person,
+            color: _selectedIndex == 3 ? kPrimaryGreen : Colors.grey,
+          ),
+          label: "Profile",
+        ),
+      ],
     );
   }
+
 }

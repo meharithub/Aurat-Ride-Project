@@ -1,4 +1,3 @@
-import 'package:aurat_ride/global_widgets/primary_back_button.dart';
 import 'package:aurat_ride/global_widgets/primary_heading.dart';
 import 'package:aurat_ride/utlils/theme/colors.dart';
 import 'package:flutter/material.dart';
@@ -90,7 +89,10 @@ class _DriverRideHistoryScreenState extends State<DriverRideHistoryScreen> {
           'Ride History',
           style: TextStyle(color: kPrimaryWhite),
         ),
-        leading: PrimaryBackButton(),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: kPrimaryWhite),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
           PopupMenuButton<String>(
             icon: Icon(Icons.filter_list, color: kPrimaryWhite),

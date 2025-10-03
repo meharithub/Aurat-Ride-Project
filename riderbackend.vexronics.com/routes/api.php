@@ -9,6 +9,7 @@ use App\Http\Controllers\RideController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\SupportController;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,6 +68,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Driver live
     Route::post('/driver/online', [DriverController::class, 'setOnline']);
+    Route::post('/driver/test', function(Request $request) {
+        $user = $request->user();
+        return response()->json(['message' => 'Test route', 'user_role' => $user->role]);
+    });
     Route::post('/driver/location', [DriverController::class, 'updateLocation']);
     Route::get('/rides/{ride}/live', [DriverController::class, 'rideLive']);
 
@@ -110,3 +115,34 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // Public routes
 Route::get('/drivers/nearby', [App\Http\Controllers\EnhancedDriverController::class, 'getNearbyDrivers']);
+
+// ====================================== ADMIN ROUTES ==============================================================
+Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
+    // Dashboard
+    Route::get('/dashboard', [AdminController::class, 'getDashboardStats']);
+    
+    // User Management
+    Route::get('/users', [AdminController::class, 'getUsers']);
+    Route::get('/users/{id}', [AdminController::class, 'getUserDetails']);
+    Route::put('/users/{id}/status', [AdminController::class, 'updateUserStatus']);
+    Route::delete('/users/{id}', [AdminController::class, 'deleteUser']);
+    
+    // Driver Registration
+    Route::post('/drivers/register', [AdminController::class, 'registerDriver']);
+    
+    // Ride Management
+    Route::get('/rides', [AdminController::class, 'getRides']);
+    Route::get('/rides/{id}', [AdminController::class, 'getRideDetails']);
+    Route::put('/rides/{id}/status', [AdminController::class, 'updateRideStatus']);
+    
+    // Analytics
+    Route::get('/analytics', [AdminController::class, 'getAnalytics']);
+    
+    // Support Management
+    Route::get('/support-messages', [AdminController::class, 'getSupportMessages']);
+    Route::put('/support-messages/{id}', [AdminController::class, 'updateSupportMessage']);
+    
+    // Settings
+    Route::get('/settings', [AdminController::class, 'getSettings']);
+    Route::put('/settings', [AdminController::class, 'updateSettings']);
+});

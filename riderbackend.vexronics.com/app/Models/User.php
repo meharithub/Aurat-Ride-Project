@@ -26,10 +26,21 @@ class User extends Authenticatable
         'is_email_verified',
         'is_phone_verified',
         'is_profile_verified',
+        'is_online',
         'profile_pic_url',
         'selfie',
         'google_id',
         'facebook_id',
+        'driving_license',
+        'vehicle_model',
+        'vehicle_number',
+        'vehicle_year',
+        'vehicle_color',
+        'cnic_front_url',
+        'cnic_back_url',
+        'driving_license_url',
+        'vehicle_registration_url',
+        'insurance_certificate_url',
     ];
 
     /**
@@ -51,6 +62,33 @@ class User extends Authenticatable
         'is_email_verified' => 'boolean',
         'is_phone_verified' => 'boolean',
         'is_profile_verified' => 'boolean',
+        'is_online' => 'boolean',
         'email_verified_at' => 'datetime',
     ];
+
+    // Relationships
+    public function ridesAsRider()
+    {
+        return $this->hasMany(Ride::class, 'rider_id');
+    }
+
+    public function ridesAsDriver()
+    {
+        return $this->hasMany(Ride::class, 'driver_id');
+    }
+
+    public function contactMessages()
+    {
+        return $this->hasMany(ContactMessage::class);
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class, 'rated_user_id');
+    }
+
+    public function givenRatings()
+    {
+        return $this->hasMany(Rating::class, 'rater_id');
+    }
 }

@@ -1,4 +1,3 @@
-import 'package:aurat_ride/global_widgets/primary_back_button.dart';
 import 'package:aurat_ride/global_widgets/primary_heading.dart';
 import 'package:aurat_ride/utlils/theme/colors.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +26,10 @@ class _DriverSettingsScreenState extends State<DriverSettingsScreen> {
           'Settings',
           style: TextStyle(color: kPrimaryWhite),
         ),
-        leading: PrimaryBackButton(),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: kPrimaryWhite),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),

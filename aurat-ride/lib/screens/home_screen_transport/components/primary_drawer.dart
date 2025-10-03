@@ -1,7 +1,9 @@
 import 'package:aurat_ride/screens/login/login_screen/login_screen.dart';
 import 'package:aurat_ride/screens/ride_history/ride_history_screen/ride_history_screen.dart';
 import 'package:aurat_ride/screens/settings/settings_screen/settings_screen.dart';
+import 'package:aurat_ride/screens/admin/admin_login_screen.dart';
 import 'package:aurat_ride/utlils/helper_functions/helper_function.dart';
+import 'package:aurat_ride/utlils/theme/colors.dart';
 import 'package:flutter/material.dart';
 
 class PrimaryDrawer extends StatelessWidget {
@@ -84,6 +86,16 @@ class PrimaryDrawer extends StatelessWidget {
                       HelperFunctions.navigateTo(context, SettingsScreen());
                     },
                   ),
+                  _separator(),
+                  _buildMenuItem(
+                    icon: Icons.admin_panel_settings,
+                    text: "Admin Panel",
+                    onTap: () {
+                      HelperFunctions.navigateTo(context, const AdminLoginScreen());
+                    },
+                    textColor: kPrimaryGreen,
+                    iconColor: kPrimaryGreen,
+                  ),
                 ],
               ),
             ),
@@ -114,12 +126,17 @@ class PrimaryDrawer extends StatelessWidget {
     required IconData icon,
     required String text,
     required VoidCallback onTap,
+    Color? textColor,
+    Color? iconColor,
   }) {
     return ListTile(
-      leading: Icon(icon, color: Colors.black87),
+      leading: Icon(icon, color: iconColor ?? Colors.black87),
       title: Text(
         text,
-        style: const TextStyle(fontSize: 16),
+        style: TextStyle(
+          fontSize: 16,
+          color: textColor ?? Colors.black87,
+        ),
       ),
       onTap: onTap,
     );

@@ -6,8 +6,8 @@
 echo "🚀 Starting Comprehensive API Testing for Production Ready App"
 echo "=============================================================="
 
-# Base URL
-BASE_URL="http://127.0.0.1:8000/api"
+# Base URL (use network IP for physical device testing)
+BASE_URL="http://192.168.18.67:8000/api"
 
 # Colors for output
 RED='\033[0;31m'

@@ -1,6 +1,7 @@
 import 'package:aurat_ride/screens/driver/driver_dashboard/driver_dashboard_screen.dart';
 import 'package:aurat_ride/screens/login/login_screen/login_screen.dart';
 import 'package:aurat_ride/screens/primary_bottom_menu/primary_bottom_menu.dart';
+import 'package:aurat_ride/screens/admin/admin_dashboard_screen.dart';
 import 'package:aurat_ride/services/user_service.dart';
 import 'package:flutter/material.dart';
 
@@ -26,8 +27,15 @@ class _AuthCheckScreenState extends State<AuthCheckScreen> {
       final isLoggedIn = await UserService.isLoggedIn();
       
       if (isLoggedIn) {
+        final isAdmin = await UserService.isAdmin();
         final isDriver = await UserService.isDriver();
-        if (isDriver) {
+        
+        if (isAdmin) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const AdminDashboardScreen()),
+          );
+        } else if (isDriver) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => DriverDashboardScreen()),

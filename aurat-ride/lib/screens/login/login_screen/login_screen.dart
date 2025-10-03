@@ -5,6 +5,7 @@ import 'package:aurat_ride/screens/email_number_verification/email_phone_verific
 import 'package:aurat_ride/screens/primary_bottom_menu/primary_bottom_menu.dart';
 import 'package:aurat_ride/screens/signup/signup_screen/signup_screen.dart';
 import 'package:aurat_ride/screens/driver/driver_dashboard/driver_dashboard_screen.dart';
+import 'package:aurat_ride/screens/admin/admin_dashboard_screen.dart';
 import 'package:aurat_ride/services/api_service.dart';
 import 'package:aurat_ride/services/user_service.dart';
 import 'package:aurat_ride/utlils/helper_functions/helper_function.dart';
@@ -58,7 +59,9 @@ class _LoginScreenState extends State<LoginScreen> {
         
         // Navigate based on role
         final userRole = response['data']['user']['role']?.toLowerCase();
-        if (userRole == 'driver') {
+        if (userRole == 'admin') {
+          HelperFunctions.navigateReplace(context, const AdminDashboardScreen());
+        } else if (userRole == 'driver') {
           HelperFunctions.navigateReplace(context, DriverDashboardScreen());
         } else {
           HelperFunctions.navigateReplace(context, PrimaryBottomSheet());

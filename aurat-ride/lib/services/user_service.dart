@@ -71,6 +71,12 @@ class UserService {
     return role?.toLowerCase() == 'rider';
   }
 
+  // Check if user is admin
+  static Future<bool> isAdmin() async {
+    final role = await getUserRole();
+    return role?.toLowerCase() == 'admin';
+  }
+
   // Logout user
   static Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
